@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react'
-import barLounge from './assets/venues/bar-lounge.webp'
-import barLoungeNeon from './assets/venues/bar-lounge-neon.webp'
 import olivaInterior from './assets/venues/oliva-interior.webp'
 import olivaTerrace from './assets/venues/oliva-terrace.webp'
+import cocktail1 from './assets/venues/25831.png'
+import cocktail2 from './assets/venues/10246.png'
+import city1 from './assets/venues/99181.png'
+import city2 from './assets/venues/8581.png'
 
 type Stage = {
   label: string
@@ -92,7 +94,7 @@ function App() {
     <>
       <main className="mx-auto flex min-h-[100svh] w-full max-w-xl flex-col justify-center px-6 py-10">
         <p className="text-[0.68rem] uppercase tracking-[0.3em] text-rose-200/60">
-          mon · apr 27 · 5pm · marburg
+          mon · apr 27 · 4pm · marburg
         </p>
 
         <h1 className="mt-3 font-display text-4xl leading-[1] text-[var(--color-cream)] sm:text-5xl">
@@ -150,9 +152,9 @@ type Stop = {
 }
 
 const stops: Stop[] = [
-  { time: '5:00', title: 'pickup', note: 'I come get you by car. Easy start.' },
-  { time: '6:00', title: 'cocktails', note: 'low lights, first toast.', images: [barLounge, barLoungeNeon] },
-  { time: '7:30', title: 'dinner + view', note: 'nice table, nicer view.', images: [olivaInterior, olivaTerrace] },
+  { time: '4:00', title: 'visit your city', note: 'I come pick you up. A little surprise along the way.', images: [city1, city2] },
+  { time: '6:00', title: 'cocktails', note: "buvons de l'alcool sans alcool.", images: [cocktail1, cocktail2] },
+  { time: '7:30', title: 'dinner', note: 'mangeons du pain allemand uniquement.', images: [olivaInterior, olivaTerrace] },
 ]
 
 function PlanModal({ onClose }: { onClose: () => void }) {
