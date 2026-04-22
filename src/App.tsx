@@ -30,8 +30,8 @@ type ItineraryStop = {
 
 const nonStages: NonStage[] = [
   {
-    label: 'Je vais peut-être chipoter',
-    taunt: 'Petit mensonge élégant : ce bouton ne croit pas à ton hésitation.',
+    label: 'I might pretend to hesitate',
+    taunt: 'Elegant little lie: this button does not believe in your hesitation.',
     x: 0,
     y: 0,
     scale: 1,
@@ -44,8 +44,8 @@ const nonStages: NonStage[] = [
     decoys: 0,
   },
   {
-    label: 'hmm… laisse-moi dramatiser',
-    taunt: 'Oh. Madame a choisi le chemin théâtral.',
+    label: 'hmm… let me dramatize this',
+    taunt: 'Oh. A lady has chosen the theatrical route.',
     x: 22,
     y: -6,
     scale: 0.96,
@@ -58,8 +58,8 @@ const nonStages: NonStage[] = [
     decoys: 0,
   },
   {
-    label: 'je fais semblant de résister',
-    taunt: 'Le bouton a roulé des yeux en français.',
+    label: 'I am pretending to resist',
+    taunt: 'The button just rolled its eyes in perfect English.',
     x: -34,
     y: 18,
     scale: 0.88,
@@ -72,8 +72,8 @@ const nonStages: NonStage[] = [
     decoys: 0,
   },
   {
-    label: 'non mais avec panache',
-    taunt: 'Il vient de sauter plus haut que ton objection.',
+    label: 'no, but make it stylish',
+    taunt: 'It just leaped higher than your objection.',
     x: 112,
     y: -88,
     scale: 1.08,
@@ -86,8 +86,8 @@ const nonStages: NonStage[] = [
     decoys: 1,
   },
   {
-    label: 'je boude, version couture',
-    taunt: 'Maintenant il pose en coin, comme une diva vexée.',
+    label: 'I am sulking, couture edition',
+    taunt: 'Now it is posing in the corner like an offended diva.',
     x: -126,
     y: 92,
     scale: 0.72,
@@ -100,8 +100,8 @@ const nonStages: NonStage[] = [
     decoys: 1,
   },
   {
-    label: 'attrape-moi si tu oses',
-    taunt: 'Téléportation activée. Très mauvais esprit, très bon timing.',
+    label: 'catch me if you dare',
+    taunt: 'Teleportation enabled. Terrible attitude, excellent timing.',
     x: 152,
     y: 118,
     scale: 0.84,
@@ -114,8 +114,8 @@ const nonStages: NonStage[] = [
     decoys: 2,
   },
   {
-    label: 'je suis minuscule et têtu',
-    taunt: 'Le voilà en format problématique de poche.',
+    label: 'I am tiny and stubborn',
+    taunt: 'There it is in an inconvenient pocket-size format.',
     x: -148,
     y: -112,
     scale: 0.58,
@@ -128,8 +128,8 @@ const nonStages: NonStage[] = [
     decoys: 2,
   },
   {
-    label: 'ceci est un faux refus',
-    taunt: 'Il y a désormais des doublures. Très magazine, très suspect.',
+    label: 'this is a fake refusal',
+    taunt: 'There are decoys now. Very editorial, very suspicious.',
     x: 0,
     y: -132,
     scale: 1.16,
@@ -142,8 +142,8 @@ const nonStages: NonStage[] = [
     decoys: 3,
   },
   {
-    label: 'je capitule avec style ? non.',
-    taunt: 'Le bouton vient de choisir le bord du cadre. Quelle audace inutile.',
+    label: 'surrender stylishly? absolutely not.',
+    taunt: 'The button has chosen the very edge of the frame. Pointless audacity.',
     x: 164,
     y: -2,
     scale: 0.66,
@@ -156,8 +156,8 @@ const nonStages: NonStage[] = [
     decoys: 4,
   },
   {
-    label: '…bon, appuie sur oui',
-    taunt: 'À ce stade, même le bouton non soutient le rendez-vous.',
+    label: '…fine, press yes',
+    taunt: 'At this point, even the no button is rooting for the date.',
     x: -164,
     y: 10,
     scale: 0.62,
@@ -176,24 +176,24 @@ const confettiIcons = ['💋', '💕', '✨', '🥂', '🌹', '💌', '🎀', '�
 const itinerary: ItineraryStop[] = [
   {
     time: '5:00 PM',
-    eyebrow: 'prélude',
-    title: 'Prise en charge devant chez toi',
-    description: 'Je viens te chercher, on quitte le mode quotidien, et la soirée commence avant même le premier virage.',
-    note: 'Tenue recommandée : irrésistible, évidemment.',
+    eyebrow: 'prelude',
+    title: 'Pickup right outside your place',
+    description: 'I come pick you up, everyday mode disappears, and the evening begins before the first turn even happens.',
+    note: 'Suggested dress code: irresistible, obviously.',
   },
   {
     time: '6:00 PM',
-    eyebrow: 'premier acte',
-    title: 'Cocktails, lumières basses et joli vertige',
-    description: 'Premier arrêt pour trinquer, se regarder un peu trop longtemps, et laisser la ville devenir notre décor du soir.',
+    eyebrow: 'first act',
+    title: 'Cocktails, low lights, and a lovely little dizzy spell',
+    description: 'First stop: a toast, eye contact that lingers a little too long, and the city casually becoming our set for the night.',
     images: [barLounge, barLoungeNeon],
   },
   {
     time: '7:30 PM',
-    eyebrow: 'deuxième acte',
-    title: 'Dîner à la bougie, avec vue qui fait son effet',
-    description: 'La suite se joue autour d’une table romantique, d’un vrai bon repas, et de ce moment où on n’a plus envie que la soirée file trop vite.',
-    note: 'Oui, la belle table avec jolie vue a été demandée.',
+    eyebrow: 'second act',
+    title: 'Candlelit dinner with a view that absolutely knows what it is doing',
+    description: 'The next scene unfolds around a romantic table, a genuinely good dinner, and that exact moment when neither of us wants the night to rush ahead.',
+    note: 'Yes, the pretty table with the pretty view was specifically requested.',
     images: [olivaInterior, olivaTerrace],
   },
 ]
@@ -273,14 +273,14 @@ function PlanModal({ onClose }: { onClose: () => void }) {
         <div className="rounded-[2.2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(52,14,29,0.95),rgba(17,8,18,0.96))] p-4 shadow-[0_30px_120px_rgba(0,0,0,0.45)] sm:p-6 lg:p-8">
           <div className="flex flex-col gap-5 border-b border-white/10 pb-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="max-w-2xl">
-              <p className="text-[0.72rem] uppercase tracking-[0.38em] text-rose-300/72">édition du lundi · 27 avril · marburg</p>
+              <p className="text-[0.72rem] uppercase tracking-[0.38em] text-rose-300/72">monday edition · april 27 · marburg</p>
               <h2 className="mt-3 font-display text-5xl leading-none text-[var(--color-cream)] sm:text-6xl">
-                Le programme sans spoiler,
+                The spoiler-free plan,
                 <br />
-                mais avec tentation.
+                but with temptation.
               </h2>
               <p className="mt-4 max-w-xl text-base leading-7 text-rose-50/78 sm:text-lg">
-                Promis : l’itinéraire reste utile, les surprises gardent leur mystère, et le niveau de flirt est réglementairement trop élevé.
+                Promise: the itinerary stays useful, the surprises keep their mystery, and the flirting is legally a little excessive.
               </p>
             </div>
 
@@ -289,7 +289,7 @@ function PlanModal({ onClose }: { onClose: () => void }) {
               onClick={onClose}
               className="self-start rounded-full border border-white/14 bg-white/8 px-4 py-2 text-sm uppercase tracking-[0.24em] text-rose-50 transition hover:bg-white/14"
             >
-              refermer le secret
+              close the secret
             </button>
           </div>
 
@@ -302,22 +302,22 @@ function PlanModal({ onClose }: { onClose: () => void }) {
 
             <aside className="space-y-4">
               <div className="editorial-card rounded-[2rem] p-5 sm:p-6">
-                <p className="text-[0.72rem] uppercase tracking-[0.34em] text-rose-200/65">petits détails qui comptent</p>
+                <p className="text-[0.72rem] uppercase tracking-[0.34em] text-rose-200/65">small details that matter</p>
                 <ul className="mt-4 space-y-4 text-[0.98rem] leading-7 text-rose-50/80">
-                  <li>• table romantique demandée, idéalement avec une jolie vue et le bon niveau de wow discret</li>
-                  <li>• timing prévu pour que tout soit fluide, chic, et sans courir comme dans une comédie ratée</li>
-                  <li>• parking possible tout près, subtilement prévu au cas où la soirée voudrait se garer sans stress</li>
+                  <li>• romantic table requested, ideally with a lovely view and exactly the right level of discreet wow</li>
+                  <li>• timing planned so everything feels smooth, chic, and never like we are sprinting through a bad rom-com</li>
+                  <li>• parking possible nearby, quietly accounted for in case the evening prefers a stress-free arrival</li>
                 </ul>
               </div>
 
               <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(160deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02))] p-5 sm:p-6">
                 <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-fuchsia-400/20 blur-3xl" />
-                <p className="text-[0.72rem] uppercase tracking-[0.34em] text-rose-200/65">clause très importante</p>
+                <p className="text-[0.72rem] uppercase tracking-[0.34em] text-rose-200/65">very important clause</p>
                 <p className="mt-4 font-display text-3xl leading-none text-[var(--color-cream)]">
-                  Tu as le droit d’arriver sublime.
+                  You are fully allowed to arrive looking stunning.
                 </p>
                 <p className="mt-4 max-w-sm text-sm leading-7 text-rose-50/78">
-                  Moi, j’apporte la voiture, le plan, et cette énergie dangereusement confiante de quelqu’un qui espère vraiment te faire sourire toute la soirée.
+                  I am bringing the car, the plan, and that dangerously confident energy of someone who very much intends to make you smile all evening.
                 </p>
               </div>
             </aside>
@@ -370,35 +370,35 @@ function App() {
             <div className="flex flex-col justify-between gap-6 rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-5 sm:p-7 lg:p-8">
               <div>
                 <div className="flex flex-wrap items-center gap-3 text-[0.72rem] uppercase tracking-[0.32em] text-rose-200/70">
-                  <span className="rounded-full border border-white/10 bg-white/6 px-3 py-2">date-zine privée</span>
-                  <span>édition limitée</span>
+                  <span className="rounded-full border border-white/10 bg-white/6 px-3 py-2">private date-zine</span>
+                  <span>limited edition</span>
                   <span>marburg after 5</span>
                 </div>
 
                 <div className="mt-7 max-w-3xl">
-                  <p className="text-sm uppercase tracking-[0.36em] text-rose-300/72">à la une</p>
+                  <p className="text-sm uppercase tracking-[0.36em] text-rose-300/72">cover story</p>
                   <h1 className="mt-3 font-display text-[3.35rem] leading-[0.88] text-[var(--color-cream)] sm:text-[4.5rem] lg:text-[5.5rem]">
-                    Princiess,
+                    Princess,
                     <br />
-                    et si lundi devenait scandaleusement charmant ?
+                    what if Monday turned scandalously charming?
                   </h1>
                   <p className="mt-5 max-w-2xl text-[1.08rem] leading-8 text-rose-50/84 sm:text-[1.18rem]">
-                    Invitation officielle à une soirée qui préfère le flirt éditorial aux vibes d’appli :
-                    je passe te prendre le lundi 27 avril à <span className="text-[var(--color-gold)]">5:00 PM</span>,
-                    puis on laisse Marburg jouer les très bons seconds rôles.
+                    Official invitation to an evening that prefers editorial flirting over dating-app energy:
+                    I am picking you up on Monday, April 27 at <span className="text-[var(--color-gold)]">5:00 PM</span>,
+                    and then we let Marburg play a very photogenic supporting role.
                   </p>
                 </div>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-[0.88fr_1.12fr]">
                 <div className="rounded-[1.6rem] border border-white/10 bg-[#2a1020]/75 p-4">
-                  <p className="text-[0.72rem] uppercase tracking-[0.32em] text-rose-200/65">motif raisonnable</p>
-                  <p className="mt-3 font-display text-3xl leading-none text-[var(--color-cream)]">Un verre, un dîner, une vue, et beaucoup trop de charme.</p>
+                  <p className="text-[0.72rem] uppercase tracking-[0.32em] text-rose-200/65">perfectly reasonable motive</p>
+                  <p className="mt-3 font-display text-3xl leading-none text-[var(--color-cream)]">A drink, a dinner, a view, and far too much charm.</p>
                 </div>
                 <div className="rotated-note rounded-[1.6rem] border border-[#ffdb96]/18 bg-[linear-gradient(135deg,rgba(255,224,162,0.12),rgba(255,255,255,0.03))] p-4 sm:p-5">
-                  <p className="text-[0.72rem] uppercase tracking-[0.28em] text-[#ffd38f]/72">note glissée discrètement</p>
+                  <p className="text-[0.72rem] uppercase tracking-[0.28em] text-[#ffd38f]/72">quietly slipped note</p>
                   <p className="mt-3 text-base leading-7 text-rose-50/82">
-                    Oui, j’ai prévu la version soignée de la soirée : joli rythme, lumière flatteuse, et assez de mystère pour éviter tout spoiler vulgaire.
+                    Yes, I planned the polished version of the evening: lovely pacing, flattering light, and enough mystery to avoid any vulgar spoilers.
                   </p>
                 </div>
               </div>
@@ -406,16 +406,16 @@ function App() {
               <div className="choice-panel relative overflow-hidden rounded-[2rem] border border-white/10 p-4 sm:p-5">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                   <div>
-                    <p className="text-[0.72rem] uppercase tracking-[0.34em] text-rose-200/65">dernier détail éditorial</p>
+                    <p className="text-[0.72rem] uppercase tracking-[0.34em] text-rose-200/65">final editorial detail</p>
                     <p className="mt-2 max-w-xl text-sm leading-7 text-rose-50/76 sm:text-base">
-                      Il y a deux options ci-dessous. L’une est chic. L’autre est capricieuse, mal élevée, et de moins en moins crédible.
+                      There are two options below. One is chic. The other is bratty, ill-behaved, and getting less believable by the second.
                     </p>
                   </div>
                   <p className="text-sm italic text-rose-200/68">{stage.taunt}</p>
                 </div>
 
                 <div className="relative mt-5 min-h-[16rem] overflow-hidden rounded-[1.7rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01))] px-3 py-4 sm:px-4 sm:py-5">
-                  <div className="absolute left-4 top-4 text-[0.68rem] uppercase tracking-[0.28em] text-rose-200/40">choix publicitaire hautement orienté</div>
+                  <div className="absolute left-4 top-4 text-[0.68rem] uppercase tracking-[0.28em] text-rose-200/40">highly biased promotional choice</div>
 
                   <button
                     type="button"
@@ -423,8 +423,8 @@ function App() {
                     className="btn-oui-glow relative z-20 inline-flex min-h-[60px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#ff6f91,#ff3d6f_55%,#d31e63)] px-7 py-4 text-left text-white shadow-[0_12px_30px_rgba(211,30,99,0.35)] transition duration-200 hover:-translate-y-0.5 hover:scale-[1.02] active:scale-95 sm:px-8"
                   >
                     <span>
-                      <span className="block font-sans text-[0.68rem] uppercase tracking-[0.28em] text-rose-50/70">option délicieusement sensée</span>
-                      <span className="mt-1 block font-display text-[1.7rem] leading-none">Je me laisse séduire</span>
+                      <span className="block font-sans text-[0.68rem] uppercase tracking-[0.28em] text-rose-50/70">deliciously sensible option</span>
+                      <span className="mt-1 block font-display text-[1.7rem] leading-none">I am letting myself be charmed</span>
                     </span>
                   </button>
 
@@ -443,7 +443,7 @@ function App() {
                         opacity: decoy.opacity,
                       }}
                     >
-                      faux non
+                      fake no
                     </span>
                   ))}
 
@@ -466,7 +466,7 @@ function App() {
                     }}
                   >
                     <span>
-                      <span className="block font-sans text-[0.62rem] uppercase tracking-[0.24em] text-rose-100/55">option faussement sérieuse</span>
+                      <span className="block font-sans text-[0.62rem] uppercase tracking-[0.24em] text-rose-100/55">falsely serious option</span>
                       <span className="mt-1 block font-display text-[1.15rem] leading-none sm:text-[1.3rem]">{stage.label}</span>
                     </span>
                   </button>
@@ -479,11 +479,11 @@ function App() {
                 <img src={barLounge} alt="" className="absolute inset-0 h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(26,8,17,0.08),rgba(22,5,13,0.82))]" />
                 <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/20 px-3 py-2 text-[0.68rem] uppercase tracking-[0.28em] text-rose-100/72 backdrop-blur-sm">
-                  couverture du soir
+                  tonight's cover
                 </div>
                 <div className="absolute bottom-4 left-4 right-4 rounded-[1.55rem] border border-white/10 bg-[rgba(23,8,15,0.5)] p-4 backdrop-blur-md sm:p-5">
-                  <p className="text-[0.72rem] uppercase tracking-[0.32em] text-rose-200/65">ambiance promise</p>
-                  <p className="mt-3 font-display text-4xl leading-none text-[var(--color-cream)]">Luxe pop, lumière douce, excellent prétexte pour te regarder.</p>
+                  <p className="text-[0.72rem] uppercase tracking-[0.32em] text-rose-200/65">promised atmosphere</p>
+                  <p className="mt-3 font-display text-4xl leading-none text-[var(--color-cream)]">Pop luxury, soft light, and an excellent excuse to look at you.</p>
                 </div>
               </div>
 
@@ -495,9 +495,9 @@ function App() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 text-[0.72rem] uppercase tracking-[0.28em] text-rose-200/62">
-                  <span className="rounded-full border border-white/10 px-3 py-2">cocktails qui brillent</span>
-                  <span className="rounded-full border border-white/10 px-3 py-2">dîner qui sait séduire</span>
-                  <span className="rounded-full border border-white/10 px-3 py-2">vue très photogénique</span>
+                  <span className="rounded-full border border-white/10 px-3 py-2">cocktails with sparkle</span>
+                  <span className="rounded-full border border-white/10 px-3 py-2">a dinner that knows how to seduce</span>
+                  <span className="rounded-full border border-white/10 px-3 py-2">ridiculously photogenic view</span>
                 </div>
               </div>
             </aside>
