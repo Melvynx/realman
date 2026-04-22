@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
   --color-cream: #fff4e7;
   --color-gold: #f4c57a;
   --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-sans: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
 }
 
 :root {
@@ -16,22 +16,18 @@
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   margin: 0;
   min-height: 100svh;
   color: #fff4e7;
   background: #12050f;
+  font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  font-family: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
 }
 
 button {
   font: inherit;
+  cursor: pointer;
 }
 
 #root {
@@ -40,130 +36,59 @@ button {
 
 .font-display {
   font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
 }
 
-.hero-shell {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03)),
-    linear-gradient(135deg, rgba(75, 17, 39, 0.92), rgba(19, 9, 19, 0.95));
-  box-shadow: 0 28px 120px rgba(5, 0, 3, 0.45);
-  backdrop-filter: blur(20px);
+/* ——— yes button: glow scales with progress (--i from 0 to 1) ——— */
+.btn-yes {
+  --i: 0;
+  animation: yes-pulse 2.4s ease-in-out infinite;
+  transition: filter 400ms ease, box-shadow 400ms ease;
+  filter: drop-shadow(0 0 calc(6px + var(--i) * 18px) rgba(255, 244, 231, calc(0.25 + var(--i) * 0.4)));
 }
 
-.choice-panel {
-  background:
-    radial-gradient(circle at top right, rgba(255, 108, 159, 0.12), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-}
-
-.editorial-card {
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03)),
-    rgba(32, 12, 22, 0.72);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-.rotated-note {
-  transform: rotate(-2deg);
-}
-
-.grain-overlay {
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 22px 22px;
-  mask-image: radial-gradient(circle at center, black, transparent 85%);
-}
-
-.non-chaos {
-  animation: non-wobble 0.42s ease-in-out infinite alternate;
-}
-
-@keyframes non-wobble {
-  from {
-    margin-top: -2px;
-    filter: saturate(0.96);
-  }
-  to {
-    margin-top: 2px;
-    filter: saturate(1.08);
-  }
-}
-
-@keyframes oui-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 18px rgba(255, 104, 145, 0.3), 0 12px 30px rgba(211, 30, 99, 0.35);
+@keyframes yes-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 244, 231, calc(0.3 + var(--i) * 0.3));
   }
   50% {
-    box-shadow: 0 0 48px rgba(255, 104, 145, 0.65), 0 16px 40px rgba(211, 30, 99, 0.42);
+    box-shadow: 0 0 0 calc(8px + var(--i) * 14px) rgba(255, 244, 231, 0);
   }
 }
 
-.btn-oui-glow {
-  animation: oui-glow 2.6s ease-in-out infinite;
+/* ——— no button: idle breathing via box-shadow (doesn't touch transform) ——— */
+.btn-no {
+  animation: no-breathe 3.6s ease-in-out infinite;
+  will-change: transform;
 }
 
+@keyframes no-breathe {
+  0%, 100% { box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0); }
+  50%      { box-shadow: inset 0 0 12px 0 rgba(255, 255, 255, 0.05); }
+}
+
+/* stage modifier: sideways button wobbles via margin (transform-safe) */
+.btn-wobble {
+  animation: no-breathe 3.6s ease-in-out infinite, btn-wobble 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes btn-wobble {
+  from { margin-top: -3px; }
+  to   { margin-top: 3px; }
+}
+
+/* stage modifier: ghost */
+.btn-ghost {
+  opacity: 0.4;
+  filter: blur(1px);
+}
+
+/* ——— modal ——— */
 @keyframes modal-in {
-  from {
-    opacity: 0;
-    transform: translateY(24px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
 }
 
 .modal-enter {
-  animation: modal-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes hero-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.hero-in {
-  animation: hero-in 0.8s ease-out forwards;
-}
-
-@keyframes confetti-fall {
-  0% {
-    transform: translateY(-40px) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(108vh) rotate(520deg);
-    opacity: 0;
-  }
-}
-
-.confetti-piece {
-  position: fixed;
-  top: 0;
-  z-index: 60;
-  user-select: none;
-  pointer-events: none;
-  animation: confetti-fall linear forwards;
-}
-
-@media (max-width: 640px) {
-  .rotated-note {
-    transform: none;
-  }
+  animation: modal-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
