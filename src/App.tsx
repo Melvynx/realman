@@ -1,4 +1,4 @@
-import { CSSProperties, MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react'
 import barLounge from './assets/venues/bar-lounge.webp'
 import barLoungeNeon from './assets/venues/bar-lounge-neon.webp'
 import olivaInterior from './assets/venues/oliva-interior.webp'
