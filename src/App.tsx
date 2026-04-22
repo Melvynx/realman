@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import barLounge from './assets/venues/bar-lounge.webp'
 import barLoungeNeon from './assets/venues/bar-lounge-neon.webp'
 import olivaInterior from './assets/venues/oliva-interior.webp'
@@ -6,70 +6,207 @@ import olivaTerrace from './assets/venues/oliva-terrace.webp'
 
 type NonStage = {
   label: string
+  taunt: string
+  x: number
+  y: number
   scale: number
-  shake: boolean
-  dodge: boolean
-  driftX: number
-  driftY: number
+  rotate: number
+  skew: number
+  radius: string
+  width: number
+  height: number
+  mode: 'inline' | 'absolute'
+  decoys: number
+}
+
+type ItineraryStop = {
+  time: string
+  eyebrow: string
+  title: string
+  description: string
+  note?: string
+  images?: string[]
 }
 
 const nonStages: NonStage[] = [
-  { label: 'NON', scale: 1, shake: false, dodge: false, driftX: 0, driftY: 0 },
-  { label: 'non ?', scale: 0.96, shake: false, dodge: false, driftX: 8, driftY: 2 },
-  { label: 'vraiment ?', scale: 0.92, shake: false, dodge: false, driftX: -10, driftY: 4 },
-  { label: 'tu es sûre ?', scale: 0.86, shake: true, dodge: false, driftX: 12, driftY: -6 },
-  { label: 'hmm… NON', scale: 0.8, shake: true, dodge: false, driftX: -16, driftY: 8 },
-  { label: 'oops', scale: 0.74, shake: true, dodge: true, driftX: 18, driftY: -10 },
-  { label: 'attrape-moi', scale: 0.68, shake: true, dodge: true, driftX: -20, driftY: 12 },
-  { label: 'too slow', scale: 0.62, shake: true, dodge: true, driftX: 24, driftY: -14 },
-  { label: 'NON non', scale: 0.57, shake: true, dodge: true, driftX: -28, driftY: 16 },
-  { label: 'hehe', scale: 0.52, shake: true, dodge: true, driftX: 30, driftY: -18 },
-  { label: 'presque', scale: 0.47, shake: true, dodge: true, driftX: -34, driftY: 20 },
-  { label: 'raté', scale: 0.42, shake: true, dodge: true, driftX: 36, driftY: -22 },
-  { label: 'pas facile', scale: 0.38, shake: true, dodge: true, driftX: -38, driftY: 24 },
-  { label: 'mini NON', scale: 0.34, shake: true, dodge: true, driftX: 42, driftY: -26 },
-  { label: 'zut', scale: 0.3, shake: true, dodge: true, driftX: -44, driftY: 28 },
-  { label: '😏', scale: 0.27, shake: true, dodge: true, driftX: 46, driftY: -30 },
-  { label: 'encore ?', scale: 0.24, shake: true, dodge: true, driftX: -48, driftY: 24 },
-  { label: 'tiny no', scale: 0.21, shake: true, dodge: true, driftX: 52, driftY: -18 },
-  { label: 'bon…', scale: 0.18, shake: true, dodge: true, driftX: -56, driftY: 12 },
-  { label: '🥲', scale: 0.16, shake: true, dodge: true, driftX: 0, driftY: -20 },
+  {
+    label: 'Je vais peut-être chipoter',
+    taunt: 'Petit mensonge élégant : ce bouton ne croit pas à ton hésitation.',
+    x: 0,
+    y: 0,
+    scale: 1,
+    rotate: -2,
+    skew: 0,
+    radius: '999px',
+    width: 244,
+    height: 60,
+    mode: 'inline',
+    decoys: 0,
+  },
+  {
+    label: 'hmm… laisse-moi dramatiser',
+    taunt: 'Oh. Madame a choisi le chemin théâtral.',
+    x: 22,
+    y: -6,
+    scale: 0.96,
+    rotate: 6,
+    skew: -5,
+    radius: '24px',
+    width: 232,
+    height: 58,
+    mode: 'inline',
+    decoys: 0,
+  },
+  {
+    label: 'je fais semblant de résister',
+    taunt: 'Le bouton a roulé des yeux en français.',
+    x: -34,
+    y: 18,
+    scale: 0.88,
+    rotate: -9,
+    skew: 6,
+    radius: '18px 30px 18px 34px',
+    width: 220,
+    height: 56,
+    mode: 'absolute',
+    decoys: 0,
+  },
+  {
+    label: 'non mais avec panache',
+    taunt: 'Il vient de sauter plus haut que ton objection.',
+    x: 112,
+    y: -88,
+    scale: 1.08,
+    rotate: 13,
+    skew: -10,
+    radius: '999px 18px 999px 18px',
+    width: 214,
+    height: 54,
+    mode: 'absolute',
+    decoys: 1,
+  },
+  {
+    label: 'je boude, version couture',
+    taunt: 'Maintenant il pose en coin, comme une diva vexée.',
+    x: -126,
+    y: 92,
+    scale: 0.72,
+    rotate: -16,
+    skew: 12,
+    radius: '16px',
+    width: 182,
+    height: 50,
+    mode: 'absolute',
+    decoys: 1,
+  },
+  {
+    label: 'attrape-moi si tu oses',
+    taunt: 'Téléportation activée. Très mauvais esprit, très bon timing.',
+    x: 152,
+    y: 118,
+    scale: 0.84,
+    rotate: 18,
+    skew: -12,
+    radius: '999px',
+    width: 188,
+    height: 46,
+    mode: 'absolute',
+    decoys: 2,
+  },
+  {
+    label: 'je suis minuscule et têtu',
+    taunt: 'Le voilà en format problématique de poche.',
+    x: -148,
+    y: -112,
+    scale: 0.58,
+    rotate: -24,
+    skew: 16,
+    radius: '14px 26px 14px 30px',
+    width: 140,
+    height: 40,
+    mode: 'absolute',
+    decoys: 2,
+  },
+  {
+    label: 'ceci est un faux refus',
+    taunt: 'Il y a désormais des doublures. Très magazine, très suspect.',
+    x: 0,
+    y: -132,
+    scale: 1.16,
+    rotate: 9,
+    skew: -8,
+    radius: '999px 999px 24px 24px',
+    width: 228,
+    height: 48,
+    mode: 'absolute',
+    decoys: 3,
+  },
+  {
+    label: 'je capitule avec style ? non.',
+    taunt: 'Le bouton vient de choisir le bord du cadre. Quelle audace inutile.',
+    x: 164,
+    y: -2,
+    scale: 0.66,
+    rotate: 26,
+    skew: -18,
+    radius: '999px',
+    width: 156,
+    height: 38,
+    mode: 'absolute',
+    decoys: 4,
+  },
+  {
+    label: '…bon, appuie sur oui',
+    taunt: 'À ce stade, même le bouton non soutient le rendez-vous.',
+    x: -164,
+    y: 10,
+    scale: 0.62,
+    rotate: -28,
+    skew: 18,
+    radius: '12px',
+    width: 150,
+    height: 36,
+    mode: 'absolute',
+    decoys: 4,
+  },
 ]
 
-const hints = [
-  '',
-  'A tiny hesitation, hmm? ✨',
-  'This button is starting to feel shy.',
-  'It did not like that click at all.',
-  'Playfully protesting…',
-  'Okay now it is getting slippery.',
-  'Very determined of you.',
-  'It has chosen chaos.',
-  'Still trying? I respect the commitment.',
-  'This is becoming a sport.',
-  'Almost impossible, but not quite.',
-  'The NON button is fighting for its life.',
-  'It refuses to cooperate gracefully.',
-  'Now it is tiny *and* dramatic.',
-  'This is honestly impressive.',
-  'Still click-able, just very unserious.',
-  'We are deep into mischief now.',
-  'One stubborn little NON.',
-  'Okay, this has become cartoonish.',
-  'At this point maybe just press OUI 💕',
-]
+const confettiIcons = ['💋', '💕', '✨', '🥂', '🌹', '💌', '🎀', '🍒']
 
-const confettiIcons = ['💕', '✨', '🌹', '💖', '🎀', '💌', '🥂', '🌷']
+const itinerary: ItineraryStop[] = [
+  {
+    time: '5:00 PM',
+    eyebrow: 'prélude',
+    title: 'Prise en charge devant chez toi',
+    description: 'Je viens te chercher, on quitte le mode quotidien, et la soirée commence avant même le premier virage.',
+    note: 'Tenue recommandée : irrésistible, évidemment.',
+  },
+  {
+    time: '6:00 PM',
+    eyebrow: 'premier acte',
+    title: 'Cocktails, lumières basses et joli vertige',
+    description: 'Premier arrêt pour trinquer, se regarder un peu trop longtemps, et laisser la ville devenir notre décor du soir.',
+    images: [barLounge, barLoungeNeon],
+  },
+  {
+    time: '7:30 PM',
+    eyebrow: 'deuxième acte',
+    title: 'Dîner à la bougie, avec vue qui fait son effet',
+    description: 'La suite se joue autour d’une table romantique, d’un vrai bon repas, et de ce moment où on n’a plus envie que la soirée file trop vite.',
+    note: 'Oui, la belle table avec jolie vue a été demandée.',
+    images: [olivaInterior, olivaTerrace],
+  },
+]
 
 function Confetti() {
   const pieces = useMemo(
     () =>
-      Array.from({ length: 24 }, (_, index) => ({
+      Array.from({ length: 26 }, (_, index) => ({
         icon: confettiIcons[index % confettiIcons.length],
         left: Math.random() * 100,
-        duration: 3.6 + Math.random() * 2.8,
-        delay: Math.random() * 1.5,
-        size: 14 + Math.random() * 16,
+        duration: 3.8 + Math.random() * 2.2,
+        delay: Math.random() * 1.2,
+        size: 16 + Math.random() * 14,
       })),
     [],
   )
@@ -94,87 +231,96 @@ function Confetti() {
   )
 }
 
-function VenueCard({
-  time,
-  title,
-  subtitle,
-  note,
-  images,
-}: {
-  time: string
-  title: string
-  subtitle?: string
-  note?: string
-  images?: string[]
-}) {
+function ItineraryCard({ stop }: { stop: ItineraryStop }) {
   return (
-    <article className="rounded-[1.75rem] border border-white/12 bg-white/6 p-4 shadow-[0_20px_60px_rgba(14,3,10,0.35)] backdrop-blur-sm sm:p-5">
-      <p className="mb-2 text-[0.72rem] uppercase tracking-[0.32em] text-rose-300/80">{time}</p>
-      <h3 className="font-serif text-2xl text-[var(--color-cream)]">{title}</h3>
-      {subtitle ? <p className="mt-1 text-sm text-rose-100/70">{subtitle}</p> : null}
-      {note ? <p className="mt-3 text-sm text-[var(--color-gold)]">{note}</p> : null}
-      {images ? (
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          {images.map((image) => (
-            <img
-              key={image}
-              src={image}
-              alt=""
-              className="h-28 w-full rounded-2xl object-cover sm:h-36"
-            />
+    <article className="editorial-card rounded-[2rem] p-4 sm:p-5">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[0.72rem] uppercase tracking-[0.34em] text-rose-200/65">{stop.eyebrow}</p>
+          <h3 className="mt-2 font-display text-[2rem] leading-[0.95] text-[var(--color-cream)] sm:text-[2.25rem]">
+            {stop.title}
+          </h3>
+        </div>
+        <div className="rounded-full border border-white/12 bg-white/8 px-3 py-2 text-[0.72rem] uppercase tracking-[0.28em] text-rose-100/80">
+          {stop.time}
+        </div>
+      </div>
+
+      <p className="mt-4 max-w-md text-[0.98rem] leading-7 text-rose-50/82 sm:text-[1.02rem]">
+        {stop.description}
+      </p>
+
+      {stop.images ? (
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          {stop.images.map((image, index) => (
+            <figure key={`${image}-${index}`} className="overflow-hidden rounded-[1.45rem] border border-white/10 bg-white/5">
+              <img src={image} alt="" className="h-36 w-full object-cover sm:h-44" />
+            </figure>
           ))}
         </div>
       ) : null}
+
+      {stop.note ? <p className="mt-4 text-sm italic text-[var(--color-gold)]">{stop.note}</p> : null}
     </article>
   )
 }
 
 function PlanModal({ onClose }: { onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[rgba(19,2,14,0.84)] px-4 py-8 backdrop-blur-md sm:py-12">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-[rgba(18,5,13,0.72)] px-4 py-6 backdrop-blur-md sm:px-6 sm:py-10">
       <Confetti />
-      <div className="mx-auto w-full max-w-3xl modal-enter">
-        <div className="rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(97,17,50,0.72),rgba(29,8,26,0.94))] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:p-8">
-          <div className="mb-6 flex items-start justify-between gap-4">
-            <div>
-              <p className="text-[0.72rem] uppercase tracking-[0.32em] text-rose-300/70">
-                Monday, April 27 · Marburg
-              </p>
-              <h2 className="mt-2 font-serif text-4xl text-[var(--color-cream)] sm:text-5xl">
-                Our little soirée
+      <div className="mx-auto w-full max-w-5xl modal-enter">
+        <div className="rounded-[2.2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(52,14,29,0.95),rgba(17,8,18,0.96))] p-4 shadow-[0_30px_120px_rgba(0,0,0,0.45)] sm:p-6 lg:p-8">
+          <div className="flex flex-col gap-5 border-b border-white/10 pb-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-[0.72rem] uppercase tracking-[0.38em] text-rose-300/72">édition du lundi · 27 avril · marburg</p>
+              <h2 className="mt-3 font-display text-5xl leading-none text-[var(--color-cream)] sm:text-6xl">
+                Le programme sans spoiler,
+                <br />
+                mais avec tentation.
               </h2>
-              <p className="mt-2 text-base italic text-rose-100/70">
-                Cute, simple, and worth saying oui to.
+              <p className="mt-4 max-w-xl text-base leading-7 text-rose-50/78 sm:text-lg">
+                Promis : l’itinéraire reste utile, les surprises gardent leur mystère, et le niveau de flirt est réglementairement trop élevé.
               </p>
             </div>
+
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full border border-white/15 bg-white/8 px-4 py-2 text-sm text-rose-50 transition hover:bg-white/14"
+              className="self-start rounded-full border border-white/14 bg-white/8 px-4 py-2 text-sm uppercase tracking-[0.24em] text-rose-50 transition hover:bg-white/14"
             >
-              Close
+              refermer le secret
             </button>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <VenueCard time="5:00 PM" title="I’ll pick you up at your place" />
-            <VenueCard
-              time="6:00 PM"
-              title="360° Bar & Lounge"
-              subtitle="Hotel Rosenpark, Marburg"
-              images={[barLounge, barLoungeNeon]}
-            />
-            <VenueCard
-              time="7:30 PM"
-              title="Restaurant OLIVA"
-              subtitle="Hotel Rosenpark, Marburg"
-              images={[olivaInterior, olivaTerrace]}
-            />
-          </div>
+          <div className="mt-6 grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
+            <div className="grid gap-4">
+              {itinerary.map((stop) => (
+                <ItineraryCard key={`${stop.time}-${stop.title}`} stop={stop} />
+              ))}
+            </div>
 
-          <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-black/15 p-5 text-sm text-rose-50/88">
-            <p>romantic table requested with a nice view</p>
-            <p className="mt-2">parking: Parkhaus Nord or Vila Vita underground parking</p>
+            <aside className="space-y-4">
+              <div className="editorial-card rounded-[2rem] p-5 sm:p-6">
+                <p className="text-[0.72rem] uppercase tracking-[0.34em] text-rose-200/65">petits détails qui comptent</p>
+                <ul className="mt-4 space-y-4 text-[0.98rem] leading-7 text-rose-50/80">
+                  <li>• table romantique demandée, idéalement avec une jolie vue et le bon niveau de wow discret</li>
+                  <li>• timing prévu pour que tout soit fluide, chic, et sans courir comme dans une comédie ratée</li>
+                  <li>• parking possible tout près, subtilement prévu au cas où la soirée voudrait se garer sans stress</li>
+                </ul>
+              </div>
+
+              <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(160deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02))] p-5 sm:p-6">
+                <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-fuchsia-400/20 blur-3xl" />
+                <p className="text-[0.72rem] uppercase tracking-[0.34em] text-rose-200/65">clause très importante</p>
+                <p className="mt-4 font-display text-3xl leading-none text-[var(--color-cream)]">
+                  Tu as le droit d’arriver sublime.
+                </p>
+                <p className="mt-4 max-w-sm text-sm leading-7 text-rose-50/78">
+                  Moi, j’apporte la voiture, le plan, et cette énergie dangereusement confiante de quelqu’un qui espère vraiment te faire sourire toute la soirée.
+                </p>
+              </div>
+            </aside>
           </div>
         </div>
       </div>
@@ -185,115 +331,176 @@ function PlanModal({ onClose }: { onClose: () => void }) {
 function App() {
   const [accepted, setAccepted] = useState(false)
   const [nonClicks, setNonClicks] = useState(0)
-  const [teleport, setTeleport] = useState({ x: 0, y: 0 })
 
-  const currentStage = nonStages[Math.min(nonClicks, nonStages.length - 1)]
+  const stage = nonStages[Math.min(nonClicks, nonStages.length - 1)]
 
-  const teaseNon = useCallback(() => {
-    if (!currentStage.dodge) return
+  const decoys = useMemo(
+    () =>
+      Array.from({ length: stage.decoys }, (_, index) => {
+        const direction = index % 2 === 0 ? 1 : -1
+        return {
+          id: `${nonClicks}-${index}`,
+          x: stage.x + direction * (48 + index * 18),
+          y: stage.y + (index - 1.5) * 34,
+          rotate: stage.rotate + direction * (10 + index * 2),
+          scale: Math.max(0.42, stage.scale - 0.14 + index * 0.04),
+          opacity: Math.max(0.16, 0.34 - index * 0.04),
+        }
+      }),
+    [nonClicks, stage.decoys, stage.rotate, stage.scale, stage.x, stage.y],
+  )
 
-    const rangeX = 90 + nonClicks * 3
-    const rangeY = 34 + Math.min(nonClicks, 10) * 4
-
-    setTeleport({
-      x: (Math.random() - 0.5) * rangeX,
-      y: (Math.random() - 0.5) * rangeY,
-    })
-  }, [currentStage.dodge, nonClicks])
-
-  const handleNonClick = useCallback(() => {
+  const handleNonClick = () => {
     setNonClicks((value) => Math.min(value + 1, nonStages.length - 1))
-
-    if (currentStage.dodge) {
-      setTeleport({
-        x: (Math.random() - 0.5) * (120 + nonClicks * 4),
-        y: (Math.random() - 0.5) * 72,
-      })
-    }
-  }, [currentStage.dodge, nonClicks])
+  }
 
   return (
     <>
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-[-8rem] top-[-7rem] h-72 w-72 rounded-full bg-rose-500/20 blur-3xl" />
-        <div className="absolute right-[-7rem] top-[10%] h-80 w-80 rounded-full bg-fuchsia-400/12 blur-3xl" />
-        <div className="absolute bottom-[-8rem] left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-amber-300/10 blur-3xl" />
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(255,84,144,0.2),transparent_30%),radial-gradient(circle_at_85%_18%,rgba(205,54,132,0.15),transparent_24%),linear-gradient(135deg,#12050f_0%,#24101e_48%,#120711_100%)]">
+        <div className="absolute inset-x-0 top-0 h-px bg-white/12" />
+        <div className="absolute left-[8%] top-[12%] h-44 w-44 rounded-full bg-[#ff5ca8]/18 blur-3xl" />
+        <div className="absolute right-[6%] top-[18%] h-52 w-52 rounded-full bg-[#ffcf70]/10 blur-3xl" />
+        <div className="absolute bottom-[8%] left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-[#7f4dff]/12 blur-3xl" />
+        <div className="grain-overlay absolute inset-0 opacity-30" />
       </div>
 
-      <main className="flex min-h-screen items-center justify-center px-4 py-10 sm:px-6">
-        <section className="hero-in w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/12 bg-white/6 shadow-[0_24px_80px_rgba(10,2,9,0.35)] backdrop-blur-md">
-          <div className="grid gap-0 lg:grid-cols-[1.12fr_0.88fr]">
-            <div className="p-6 sm:p-8 lg:p-12">
-              <p className="text-[0.72rem] uppercase tracking-[0.38em] text-rose-300/75">
-                a very special invitation
-              </p>
+      <main className="px-4 py-4 sm:px-6 sm:py-6">
+        <section className="hero-shell hero-in mx-auto w-full max-w-6xl overflow-hidden rounded-[2.25rem] px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr] lg:gap-8">
+            <div className="flex flex-col justify-between gap-6 rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-5 sm:p-7 lg:p-8">
+              <div>
+                <div className="flex flex-wrap items-center gap-3 text-[0.72rem] uppercase tracking-[0.32em] text-rose-200/70">
+                  <span className="rounded-full border border-white/10 bg-white/6 px-3 py-2">date-zine privée</span>
+                  <span>édition limitée</span>
+                  <span>marburg after 5</span>
+                </div>
 
-              <div className="mt-6 space-y-4 text-left">
-                <p className="font-serif text-4xl leading-none text-[var(--color-cream)] sm:text-5xl lg:text-6xl">
-                  Hey Princiess,
-                </p>
-                <p className="max-w-2xl text-xl leading-relaxed text-rose-50/88 sm:text-2xl">
-                  Would you accept my invitation for a date in Marburg the Monday, April 27 at
-                  5:00 PM?
-                </p>
-                <p className="text-lg italic text-rose-100/72 sm:text-xl">
-                  I’ll pick you up at your place.
-                </p>
+                <div className="mt-7 max-w-3xl">
+                  <p className="text-sm uppercase tracking-[0.36em] text-rose-300/72">à la une</p>
+                  <h1 className="mt-3 font-display text-[3.35rem] leading-[0.88] text-[var(--color-cream)] sm:text-[4.5rem] lg:text-[5.5rem]">
+                    Princiess,
+                    <br />
+                    et si lundi devenait scandaleusement charmant ?
+                  </h1>
+                  <p className="mt-5 max-w-2xl text-[1.08rem] leading-8 text-rose-50/84 sm:text-[1.18rem]">
+                    Invitation officielle à une soirée qui préfère le flirt éditorial aux vibes d’appli :
+                    je passe te prendre le lundi 27 avril à <span className="text-[var(--color-gold)]">5:00 PM</span>,
+                    puis on laisse Marburg jouer les très bons seconds rôles.
+                  </p>
+                </div>
               </div>
 
-              <div className="relative mt-10 flex min-h-[9rem] flex-col items-start justify-center gap-5 sm:min-h-[10rem] sm:flex-row sm:items-center sm:justify-start sm:gap-6">
-                <button
-                  type="button"
-                  onClick={() => setAccepted(true)}
-                  className="btn-oui-glow rounded-[1.25rem] bg-[linear-gradient(135deg,#f43f5e,#be185d)] px-9 py-4 font-serif text-2xl text-white transition duration-200 hover:-translate-y-0.5 hover:scale-[1.03] active:scale-95"
-                >
-                  OUI
-                </button>
+              <div className="grid gap-4 sm:grid-cols-[0.88fr_1.12fr]">
+                <div className="rounded-[1.6rem] border border-white/10 bg-[#2a1020]/75 p-4">
+                  <p className="text-[0.72rem] uppercase tracking-[0.32em] text-rose-200/65">motif raisonnable</p>
+                  <p className="mt-3 font-display text-3xl leading-none text-[var(--color-cream)]">Un verre, un dîner, une vue, et beaucoup trop de charme.</p>
+                </div>
+                <div className="rotated-note rounded-[1.6rem] border border-[#ffdb96]/18 bg-[linear-gradient(135deg,rgba(255,224,162,0.12),rgba(255,255,255,0.03))] p-4 sm:p-5">
+                  <p className="text-[0.72rem] uppercase tracking-[0.28em] text-[#ffd38f]/72">note glissée discrètement</p>
+                  <p className="mt-3 text-base leading-7 text-rose-50/82">
+                    Oui, j’ai prévu la version soignée de la soirée : joli rythme, lumière flatteuse, et assez de mystère pour éviter tout spoiler vulgaire.
+                  </p>
+                </div>
+              </div>
 
-                <div
-                  className="relative"
-                  style={{
-                    transform: `translate(${teleport.x + currentStage.driftX}px, ${teleport.y + currentStage.driftY}px)`,
-                    transition: currentStage.dodge ? 'transform 140ms ease-out' : 'transform 260ms ease',
-                  }}
-                >
+              <div className="choice-panel relative overflow-hidden rounded-[2rem] border border-white/10 p-4 sm:p-5">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-[0.72rem] uppercase tracking-[0.34em] text-rose-200/65">dernier détail éditorial</p>
+                    <p className="mt-2 max-w-xl text-sm leading-7 text-rose-50/76 sm:text-base">
+                      Il y a deux options ci-dessous. L’une est chic. L’autre est capricieuse, mal élevée, et de moins en moins crédible.
+                    </p>
+                  </div>
+                  <p className="text-sm italic text-rose-200/68">{stage.taunt}</p>
+                </div>
+
+                <div className="relative mt-5 min-h-[16rem] overflow-hidden rounded-[1.7rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01))] px-3 py-4 sm:px-4 sm:py-5">
+                  <div className="absolute left-4 top-4 text-[0.68rem] uppercase tracking-[0.28em] text-rose-200/40">choix publicitaire hautement orienté</div>
+
+                  <button
+                    type="button"
+                    onClick={() => setAccepted(true)}
+                    className="btn-oui-glow relative z-20 inline-flex min-h-[60px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#ff6f91,#ff3d6f_55%,#d31e63)] px-7 py-4 text-left text-white shadow-[0_12px_30px_rgba(211,30,99,0.35)] transition duration-200 hover:-translate-y-0.5 hover:scale-[1.02] active:scale-95 sm:px-8"
+                  >
+                    <span>
+                      <span className="block font-sans text-[0.68rem] uppercase tracking-[0.28em] text-rose-50/70">option délicieusement sensée</span>
+                      <span className="mt-1 block font-display text-[1.7rem] leading-none">Je me laisse séduire</span>
+                    </span>
+                  </button>
+
+                  {decoys.map((decoy) => (
+                    <span
+                      key={decoy.id}
+                      aria-hidden="true"
+                      className="pointer-events-none absolute z-10 inline-flex items-center justify-center border border-dashed border-white/12 bg-white/4 px-4 text-[0.72rem] uppercase tracking-[0.22em] text-rose-50/50 backdrop-blur-sm"
+                      style={{
+                        left: '50%',
+                        top: '50%',
+                        width: `${Math.max(108, stage.width - 24)}px`,
+                        height: `${Math.max(34, stage.height - 8)}px`,
+                        borderRadius: stage.radius,
+                        transform: `translate(calc(-50% + ${decoy.x}px), calc(-50% + ${decoy.y}px)) rotate(${decoy.rotate}deg) scale(${decoy.scale})`,
+                        opacity: decoy.opacity,
+                      }}
+                    >
+                      faux non
+                    </span>
+                  ))}
+
                   <button
                     type="button"
                     onClick={handleNonClick}
-                    onMouseEnter={teaseNon}
-                    onFocus={teaseNon}
-                    className={`rounded-[1.1rem] border border-white/16 bg-white/6 px-7 py-3 font-serif text-rose-100/75 transition ${currentStage.shake ? 'btn-shaking' : ''}`}
+                    onMouseEnter={handleNonClick}
+                    onFocus={handleNonClick}
+                    className={`absolute z-30 inline-flex items-center justify-center border border-white/12 bg-[rgba(255,255,255,0.08)] px-4 text-center text-rose-50/76 backdrop-blur-sm transition duration-200 hover:bg-[rgba(255,255,255,0.12)] ${stage.mode === 'absolute' ? 'non-chaos' : ''}`}
                     style={{
-                      transform: `scale(${currentStage.scale})`,
-                      transformOrigin: 'center',
+                      left: stage.mode === 'absolute' ? '50%' : '0.75rem',
+                      top: stage.mode === 'absolute' ? '50%' : '5.4rem',
+                      width: `${stage.width}px`,
+                      height: `${stage.height}px`,
+                      borderRadius: stage.radius,
+                      transform:
+                        stage.mode === 'absolute'
+                          ? `translate(calc(-50% + ${stage.x}px), calc(-50% + ${stage.y}px)) rotate(${stage.rotate}deg) skew(${stage.skew}deg) scale(${stage.scale})`
+                          : `translate(${stage.x}px, ${stage.y}px) rotate(${stage.rotate}deg) skew(${stage.skew}deg) scale(${stage.scale})`,
                     }}
                   >
-                    {currentStage.label}
+                    <span>
+                      <span className="block font-sans text-[0.62rem] uppercase tracking-[0.24em] text-rose-100/55">option faussement sérieuse</span>
+                      <span className="mt-1 block font-display text-[1.15rem] leading-none sm:text-[1.3rem]">{stage.label}</span>
+                    </span>
                   </button>
                 </div>
               </div>
-
-              <p className="mt-2 min-h-6 text-sm italic text-rose-200/55">{hints[nonClicks]}</p>
             </div>
 
-            <div className="relative min-h-[18rem] border-t border-white/10 lg:min-h-full lg:border-l lg:border-t-0">
-              <img
-                src={barLounge}
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(36,6,21,0.16),rgba(25,4,14,0.82))]" />
-              <div className="absolute inset-x-4 bottom-4 rounded-[1.5rem] border border-white/12 bg-[rgba(28,8,20,0.58)] p-4 backdrop-blur-sm sm:inset-x-6 sm:bottom-6 sm:p-5">
-                <p className="text-[0.7rem] uppercase tracking-[0.32em] text-rose-300/75">Marburg moodboard</p>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <img src={barLoungeNeon} alt="" className="h-28 w-full rounded-2xl object-cover" />
-                  <img src={olivaInterior} alt="" className="h-28 w-full rounded-2xl object-cover" />
+            <aside className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="relative min-h-[19rem] overflow-hidden rounded-[2rem] border border-white/10 bg-[#170913]">
+                <img src={barLounge} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(26,8,17,0.08),rgba(22,5,13,0.82))]" />
+                <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/20 px-3 py-2 text-[0.68rem] uppercase tracking-[0.28em] text-rose-100/72 backdrop-blur-sm">
+                  couverture du soir
                 </div>
-                <p className="mt-3 text-sm text-rose-50/72">
-                  Elegant drinks, dinner at Rosenpark, and a sweet little evening together.
-                </p>
+                <div className="absolute bottom-4 left-4 right-4 rounded-[1.55rem] border border-white/10 bg-[rgba(23,8,15,0.5)] p-4 backdrop-blur-md sm:p-5">
+                  <p className="text-[0.72rem] uppercase tracking-[0.32em] text-rose-200/65">ambiance promise</p>
+                  <p className="mt-3 font-display text-4xl leading-none text-[var(--color-cream)]">Luxe pop, lumière douce, excellent prétexte pour te regarder.</p>
+                </div>
               </div>
-            </div>
+
+              <div className="grid gap-4 rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))] p-4 sm:p-5">
+                <div className="grid grid-cols-2 gap-3">
+                  <img src={barLoungeNeon} alt="" className="h-36 w-full rounded-[1.35rem] object-cover" />
+                  <img src={olivaInterior} alt="" className="h-36 w-full rounded-[1.35rem] object-cover" />
+                  <img src={olivaTerrace} alt="" className="col-span-2 h-40 w-full rounded-[1.35rem] object-cover" />
+                </div>
+
+                <div className="flex flex-wrap gap-2 text-[0.72rem] uppercase tracking-[0.28em] text-rose-200/62">
+                  <span className="rounded-full border border-white/10 px-3 py-2">cocktails qui brillent</span>
+                  <span className="rounded-full border border-white/10 px-3 py-2">dîner qui sait séduire</span>
+                  <span className="rounded-full border border-white/10 px-3 py-2">vue très photogénique</span>
+                </div>
+              </div>
+            </aside>
           </div>
         </section>
       </main>
