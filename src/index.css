@@ -139,22 +139,10 @@ button {
   to { opacity: 1; transform: none; }
 }
 
-/* ——— marburg secret M hint ——— */
+/* ——— marburg secret M (invisible hint) ——— */
 .secret-m {
-  position: relative;
+  cursor: text;
 }
-.secret-m::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -2px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.25;
-  transition: opacity 200ms ease;
-}
-.secret-m:hover::after { opacity: 0.8; }
 
 .enemy-fly {
   animation: enemy-bob 0.8s ease-in-out infinite alternate;

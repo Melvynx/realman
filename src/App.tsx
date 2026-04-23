@@ -102,14 +102,13 @@ function App() {
       <main className="mx-auto flex min-h-[100svh] w-full max-w-xl flex-col justify-center px-6 py-10">
         <p className="text-[0.68rem] uppercase tracking-[0.3em] text-rose-200/60">
           mon · apr 27 · 4pm ·{' '}
-          <button
-            type="button"
+          <span
             onClick={() => setShowDino(true)}
-            aria-label="secret"
-            className="secret-m inline-block cursor-pointer text-rose-200/60 hover:text-[var(--color-gold)] transition"
+            aria-hidden
+            className="secret-m"
           >
             m
-          </button>
+          </span>
           arburg
         </p>
 
@@ -266,7 +265,8 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
   const [, setTick] = useState(0)
   const [jumps, setJumps] = useState(0)
   const [gameOver, setGameOver] = useState(false)
-  const [revealed, setRevealed] = useState(false)
+  const [phase, setPhase] = useState<1 | 2>(1)
+  const [letter, setLetter] = useState<0 | 1 | 2>(0)
 
   const yRef = useRef(0)
   const vRef = useRef(0)
@@ -274,6 +274,7 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
   const idRef = useRef(0)
   const lastSpawnRef = useRef(0)
   const runningRef = useRef(true)
+  const phaseRef = useRef<1 | 2>(1)
 
   const reset = () => {
     yRef.current = 0
@@ -286,17 +287,30 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
     runningRef.current = true
   }
 
+  const startPhase2 = () => {
+    phaseRef.current = 2
+    setPhase(2)
+    setLetter(0)
+    reset()
+  }
+
   const jump = () => {
-    if (gameOver || revealed) return
+    if (gameOver || letter !== 0) return
     if (yRef.current <= 0.5) vRef.current = -JUMP_V
   }
 
   useEffect(() => {
-    if (jumps >= GOAL && !revealed) {
-      setRevealed(true)
+    if (phase === 1 && jumps >= GOAL && letter === 0) {
+      setLetter(1)
       runningRef.current = false
     }
-  }, [jumps, revealed])
+  }, [jumps, letter, phase])
+
+  useEffect(() => {
+    if (phase === 2 && gameOver && letter === 0) {
+      setLetter(2)
+    }
+  }, [gameOver, letter, phase])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -310,7 +324,7 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [gameOver, revealed, onClose])
+  }, [gameOver, letter, onClose])
 
   useEffect(() => {
     let raf = 0
@@ -321,8 +335,9 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
       const dt = Math.min(t - last, 40)
       last = t
       const f = dt / 16
+      const isP2 = phaseRef.current === 2
 
-      if (runningRef.current && !revealed) {
+      if (runningRef.current) {
         vRef.current += GRAVITY * f
         yRef.current -= vRef.current * f
         if (yRef.current < 0) {
@@ -330,13 +345,15 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
           vRef.current = 0
         }
 
-        if (t - lastSpawnRef.current > 1400 + Math.random() * 900) {
-          const fly = Math.random() < 0.35
+        const spawnGap = isP2 ? 420 + Math.random() * 180 : 1400 + Math.random() * 900
+        if (t - lastSpawnRef.current > spawnGap) {
+          const fly = Math.random() < (isP2 ? 0.55 : 0.35)
           enemiesRef.current.push({ id: idRef.current++, x: DINO_W, passed: false, fly })
           lastSpawnRef.current = t
         }
 
-        for (const e of enemiesRef.current) e.x -= SPEED * f
+        const speed = isP2 ? SPEED * 1.9 : SPEED
+        for (const e of enemiesRef.current) e.x -= speed * f
 
         for (const e of enemiesRef.current) {
           const overlapX = e.x < PLAYER_X + PLAYER_SIZE - 10 && e.x + ENEMY_SIZE - 10 > PLAYER_X
@@ -367,13 +384,15 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
     }
     raf = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(raf)
-  }, [revealed])
+  }, [])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[rgba(12,5,10,0.9)] px-4 py-8 backdrop-blur-md">
       <div className="w-full max-w-3xl">
         <div className="flex items-center justify-between text-[0.68rem] uppercase tracking-[0.3em] text-rose-200/60">
-          <span>jump melvyn · {jumps}/{GOAL}</span>
+          <span>
+            {phase === 1 ? `jump melvyn · ${jumps}/${GOAL}` : 'round 2'}
+          </span>
           <button
             type="button"
             onClick={onClose}
@@ -430,7 +449,7 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
             ))}
           </div>
 
-          {gameOver && !revealed ? (
+          {gameOver && letter === 0 ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-[rgba(12,5,10,0.8)]">
               <p className="font-display text-3xl italic text-[var(--color-cream)]">caught by melvyn</p>
               <p className="mt-1 text-xs uppercase tracking-[0.3em] text-rose-200/60">space · tap to retry</p>
@@ -443,12 +462,32 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
         </p>
       </div>
 
-      {revealed ? (
+      {letter === 1 ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-[rgba(12,5,10,0.92)] px-6 backdrop-blur-xl">
+          <div className="modal-enter w-full max-w-lg rounded-2xl border border-white/10 bg-[#1a0a14] p-8 text-left">
+            <p className="text-center text-[0.68rem] uppercase tracking-[0.3em] text-[var(--color-gold)]">secret letter</p>
+            <div className="mt-5 space-y-4 font-display text-xl italic leading-snug text-[var(--color-cream)]">
+              <p>Hey Mariia, you're good at video games. We should build one together.</p>
+              <p>I know you're trying to avoid me, which is what this game was really about. It's normal. I made a mistake.</p>
+              <p>But I hope next time you'll try to come closer to me.</p>
+            </div>
+            <button
+              type="button"
+              onClick={startPhase2}
+              className="mt-7 w-full rounded-full border border-[var(--color-gold)]/40 bg-[var(--color-gold)]/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-[var(--color-gold)] transition hover:bg-[var(--color-gold)]/20"
+            >
+              secret 2
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {letter === 2 ? (
         <div className="absolute inset-0 flex items-center justify-center bg-[rgba(12,5,10,0.92)] px-6 backdrop-blur-xl">
           <div className="modal-enter w-full max-w-lg rounded-2xl border border-white/10 bg-[#1a0a14] p-8 text-center">
-            <p className="text-[0.68rem] uppercase tracking-[0.3em] text-[var(--color-gold)]">secret letter</p>
+            <p className="text-[0.68rem] uppercase tracking-[0.3em] text-[var(--color-gold)]">secret letter · 2</p>
             <p className="mt-4 font-display text-2xl italic leading-snug text-[var(--color-cream)]">
-              I know that you have fear about me, it's normal, i am effraying, what kind of life do you want ?
+              Welcome. You're ready for Monday. See you.
             </p>
             <button
               type="button"
