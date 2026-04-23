@@ -347,9 +347,7 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
 
         const spawnGap = isP2 ? 420 + Math.random() * 180 : 1400 + Math.random() * 900
         if (t - lastSpawnRef.current > spawnGap) {
-          const last = enemiesRef.current[enemiesRef.current.length - 1]
-          let fly = Math.random() < 0.5
-          if (last && last.fly === fly && Math.random() < 0.7) fly = !fly
+          const fly = Math.random() < 0.2
           enemiesRef.current.push({ id: idRef.current++, x: DINO_W, passed: false, fly })
           lastSpawnRef.current = t
         }
