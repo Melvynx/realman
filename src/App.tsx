@@ -273,6 +273,8 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
   const enemiesRef = useRef<Enemy[]>([])
   const idRef = useRef(0)
   const lastSpawnRef = useRef(0)
+  const nextGapRef = useRef(1200)
+  const groundStreakRef = useRef(0)
   const runningRef = useRef(true)
   const phaseRef = useRef<1 | 2>(1)
 
@@ -282,6 +284,8 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
     enemiesRef.current = []
     idRef.current = 0
     lastSpawnRef.current = performance.now()
+    nextGapRef.current = 900 + Math.random() * 800
+    groundStreakRef.current = 0
     setGameOver(false)
     setJumps(0)
     runningRef.current = true
@@ -345,10 +349,25 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
           vRef.current = 0
         }
 
-        const spawnGap = isP2 ? 420 + Math.random() * 180 : 1400 + Math.random() * 900
-        if (t - lastSpawnRef.current > spawnGap) {
-          const fly = Math.random() < 0.2
+        if (t - lastSpawnRef.current > nextGapRef.current) {
+          const forceFly = groundStreakRef.current >= 3
+          const flyProb = isP2 ? 0.45 : 0.28
+          const fly = forceFly || Math.random() < flyProb
           enemiesRef.current.push({ id: idRef.current++, x: DINO_W, passed: false, fly })
+          groundStreakRef.current = fly ? 0 : groundStreakRef.current + 1
+
+          const r = Math.random()
+          let gap: number
+          if (isP2) {
+            gap = 320 + Math.random() * 380
+          } else if (r < 0.18) {
+            gap = 550 + Math.random() * 250
+          } else if (r < 0.78) {
+            gap = 900 + Math.random() * 700
+          } else {
+            gap = 1700 + Math.random() * 900
+          }
+          nextGapRef.current = gap
           lastSpawnRef.current = t
         }
 
