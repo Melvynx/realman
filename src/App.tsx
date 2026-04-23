@@ -248,16 +248,16 @@ function PlanModal({ onClose }: { onClose: () => void }) {
   )
 }
 
-const DINO_W = 680
-const DINO_H = 220
-const PLAYER_X = 60
-const PLAYER_SIZE = 56
-const ENEMY_SIZE = 46
-const GRAVITY = 0.85
-const JUMP_V = 15
+const DINO_W = 600
+const DINO_H = 260
+const PLAYER_X = 56
+const PLAYER_SIZE = 64
+const ENEMY_SIZE = 52
+const GRAVITY = 0.82
+const JUMP_V = 16
 const SPEED = 5.2
 const GOAL = 10
-const FLY_Y = 78
+const FLY_Y = 92
 
 type Enemy = { id: number; x: number; passed: boolean; fly: boolean }
 
@@ -388,26 +388,61 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
     return () => cancelAnimationFrame(raf)
   }, [])
 
+  const pct = Math.min(100, (jumps / GOAL) * 100)
+
+  const handleTap = () => {
+    if (gameOver) reset()
+    else jump()
+  }
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[rgba(12,5,10,0.9)] px-4 py-8 backdrop-blur-md">
-      <div className="w-full max-w-3xl">
-        <div className="flex items-center justify-between text-[0.68rem] uppercase tracking-[0.3em] text-rose-200/60">
-          <span>
-            {phase === 1 ? `jump melvyn · ${jumps}/${GOAL}` : 'round 2'}
-          </span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full border border-white/10 px-3 py-1 text-rose-50/70 hover:bg-white/5"
-          >
-            esc
-          </button>
-        </div>
+    <div className="dino-root fixed inset-0 z-50 flex flex-col bg-[rgba(12,5,10,0.95)] backdrop-blur-md">
+      <div className="flex items-center justify-between px-4 py-3 sm:px-6">
+        <p className="text-[0.68rem] uppercase tracking-[0.3em] text-rose-200/60">
+          {phase === 1 ? 'avoid 10 melvyns' : 'round 2'}
+        </p>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="close"
+          className="h-10 w-10 rounded-full border border-white/10 text-base text-rose-50/70 transition active:scale-95 hover:bg-white/5"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div className="flex flex-1 flex-col items-center justify-center px-3 pb-6 sm:px-6">
+        {phase === 1 ? (
+          <div className="mb-3 w-full max-w-xl">
+            <div className="flex items-baseline justify-between">
+              <span className="font-display text-xl italic text-[var(--color-cream)] sm:text-2xl">
+                {jumps} <span className="text-rose-200/40">/</span> {GOAL}
+              </span>
+              <span className="text-[0.62rem] uppercase tracking-[0.3em] text-rose-200/50">
+                {jumps >= GOAL ? 'done' : `${GOAL - jumps} to go`}
+              </span>
+            </div>
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/5">
+              <div
+                className="h-full bg-[var(--color-gold)] transition-[width] duration-300 ease-out"
+                style={{ width: `${pct}%`, boxShadow: '0 0 10px rgba(244,197,122,0.6)' }}
+              />
+            </div>
+            <div className="mt-2 flex justify-between">
+              {Array.from({ length: GOAL }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-1.5 w-1.5 rounded-full transition ${i < jumps ? 'bg-[var(--color-gold)]' : 'bg-white/15'}`}
+                />
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         <div
-          className="relative mt-3 w-full select-none overflow-hidden rounded-2xl border border-white/10 bg-[#1a0a14]"
+          className="dino-area relative w-full max-w-xl select-none touch-manipulation overflow-hidden rounded-2xl border border-white/10 bg-[#1a0a14]"
           style={{ aspectRatio: `${DINO_W} / ${DINO_H}` }}
-          onClick={() => (gameOver ? reset() : jump())}
+          onClick={handleTap}
         >
           <div className="dino-stage absolute inset-0">
             <div
@@ -460,15 +495,15 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
         </div>
 
         <p className="mt-3 text-center text-[0.66rem] uppercase tracking-[0.3em] text-rose-200/40">
-          space / tap to jump
+          tap to jump · stay grounded for flyers
         </p>
       </div>
 
       {letter === 1 ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-[rgba(12,5,10,0.92)] px-6 backdrop-blur-xl">
-          <div className="modal-enter w-full max-w-lg rounded-2xl border border-white/10 bg-[#1a0a14] p-8 text-left">
+        <div className="absolute inset-0 flex items-center justify-center overflow-y-auto bg-[rgba(12,5,10,0.94)] px-4 py-8 backdrop-blur-xl">
+          <div className="modal-enter w-full max-w-lg rounded-2xl border border-white/10 bg-[#1a0a14] p-5 text-left sm:p-8">
             <p className="text-center text-[0.68rem] uppercase tracking-[0.3em] text-[var(--color-gold)]">secret letter</p>
-            <div className="mt-5 space-y-4 font-display text-xl italic leading-snug text-[var(--color-cream)]">
+            <div className="mt-5 space-y-4 font-display text-lg italic leading-snug text-[var(--color-cream)] sm:text-xl">
               <p>Hey Mariia, you're good at video games. We should build one together.</p>
               <p>I know you're trying to avoid me, which is what this game was really about. It's normal. I made a mistake.</p>
               <p>But I hope next time you'll try to come closer to me.</p>
@@ -476,7 +511,7 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
             <button
               type="button"
               onClick={startPhase2}
-              className="mt-7 w-full rounded-full border border-[var(--color-gold)]/40 bg-[var(--color-gold)]/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-[var(--color-gold)] transition hover:bg-[var(--color-gold)]/20"
+              className="mt-6 w-full rounded-full border border-[var(--color-gold)]/40 bg-[var(--color-gold)]/10 px-5 py-3 text-xs uppercase tracking-[0.25em] text-[var(--color-gold)] transition active:scale-95 hover:bg-[var(--color-gold)]/20"
             >
               secret 2
             </button>
@@ -485,16 +520,16 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
       ) : null}
 
       {letter === 2 ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-[rgba(12,5,10,0.92)] px-6 backdrop-blur-xl">
-          <div className="modal-enter w-full max-w-lg rounded-2xl border border-white/10 bg-[#1a0a14] p-8 text-center">
+        <div className="absolute inset-0 flex items-center justify-center overflow-y-auto bg-[rgba(12,5,10,0.94)] px-4 py-8 backdrop-blur-xl">
+          <div className="modal-enter w-full max-w-lg rounded-2xl border border-white/10 bg-[#1a0a14] p-5 text-center sm:p-8">
             <p className="text-[0.68rem] uppercase tracking-[0.3em] text-[var(--color-gold)]">secret letter · 2</p>
-            <p className="mt-4 font-display text-2xl italic leading-snug text-[var(--color-cream)]">
+            <p className="mt-4 font-display text-xl italic leading-snug text-[var(--color-cream)] sm:text-2xl">
               Welcome. You're ready for Monday. See you.
             </p>
             <button
               type="button"
               onClick={onClose}
-              className="mt-6 rounded-full border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.2em] text-rose-50/70 transition hover:bg-white/5"
+              className="mt-6 w-full rounded-full border border-white/10 px-5 py-3 text-xs uppercase tracking-[0.2em] text-rose-50/70 transition active:scale-95 hover:bg-white/5"
             >
               close
             </button>

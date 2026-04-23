@@ -152,6 +152,19 @@ button {
   to   { transform: translateY(3px); }
 }
 
+/* ——— dino: mobile-friendly root ——— */
+.dino-root {
+  touch-action: manipulation;
+  overscroll-behavior: contain;
+}
+
+.dino-area {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 /* ——— dino stage ——— */
 .dino-stage {
   background:
