@@ -156,6 +156,14 @@ button {
 }
 .secret-m:hover::after { opacity: 0.8; }
 
+.enemy-fly {
+  animation: enemy-bob 0.8s ease-in-out infinite alternate;
+}
+@keyframes enemy-bob {
+  from { transform: translateY(-3px); }
+  to   { transform: translateY(3px); }
+}
+
 /* ——— dino stage ——— */
 .dino-stage {
   background:

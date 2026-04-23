@@ -258,8 +258,9 @@ const GRAVITY = 0.85
 const JUMP_V = 15
 const SPEED = 5.2
 const GOAL = 10
+const FLY_Y = 78
 
-type Enemy = { id: number; x: number; passed: boolean }
+type Enemy = { id: number; x: number; passed: boolean; fly: boolean }
 
 function MarburgDino({ onClose }: { onClose: () => void }) {
   const [, setTick] = useState(0)
@@ -330,7 +331,8 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
         }
 
         if (t - lastSpawnRef.current > 1400 + Math.random() * 900) {
-          enemiesRef.current.push({ id: idRef.current++, x: DINO_W, passed: false })
+          const fly = Math.random() < 0.35
+          enemiesRef.current.push({ id: idRef.current++, x: DINO_W, passed: false, fly })
           lastSpawnRef.current = t
         }
 
@@ -338,10 +340,17 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
 
         for (const e of enemiesRef.current) {
           const overlapX = e.x < PLAYER_X + PLAYER_SIZE - 10 && e.x + ENEMY_SIZE - 10 > PLAYER_X
-          if (overlapX && yRef.current < ENEMY_SIZE - 12) {
-            runningRef.current = false
-            setGameOver(true)
-            break
+          if (overlapX) {
+            const pBottom = yRef.current
+            const pTop = yRef.current + PLAYER_SIZE
+            const eBottom = e.fly ? FLY_Y : 0
+            const eTop = eBottom + ENEMY_SIZE
+            const hits = pTop - 12 > eBottom && pBottom + 12 < eTop
+            if (hits) {
+              runningRef.current = false
+              setGameOver(true)
+              break
+            }
           }
           if (!e.passed && e.x + ENEMY_SIZE < PLAYER_X) {
             e.passed = true
@@ -407,10 +416,10 @@ function MarburgDino({ onClose }: { onClose: () => void }) {
                 src={melvynHead}
                 alt="melvyn"
                 draggable={false}
-                className="absolute"
+                className={`absolute ${e.fly ? 'enemy-fly' : ''}`}
                 style={{
                   left: `${(e.x / DINO_W) * 100}%`,
-                  bottom: 2,
+                  bottom: `calc(2px + ${((e.fly ? FLY_Y : 0) / DINO_H) * 100}%)`,
                   width: `${(ENEMY_SIZE / DINO_W) * 100}%`,
                   height: `${(ENEMY_SIZE / DINO_H) * 100}%`,
                   objectFit: 'cover',
