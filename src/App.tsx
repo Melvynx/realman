@@ -5,6 +5,8 @@ import cocktail1 from './assets/venues/25831.png'
 import cocktail2 from './assets/venues/10246.png'
 import city1 from './assets/venues/99181.png'
 import city2 from './assets/venues/8581.png'
+import mariiaHead from './assets/venues/mariia-head.png'
+import melvynHead from './assets/venues/melvyn.png'
 
 type Stage = {
   label: string
@@ -33,8 +35,11 @@ const stages: Stage[] = [
 
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v))
 
+type Screen = 'form' | 'intro' | 'plan'
+
 function App() {
-  const [accepted, setAccepted] = useState(false)
+  const [screen, setScreen] = useState<Screen>('form')
+  const [showDino, setShowDino] = useState(false)
   const [step, setStep] = useState(0)
   const [dodge, setDodge] = useState({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
@@ -47,9 +52,11 @@ function App() {
     if (!isDodge) setDodge({ x: 0, y: 0 })
   }, [isDodge])
 
+  const acceptYes = () => setScreen('intro')
+
   const handleClick = () => {
     if (isDodge) {
-      setAccepted(true)
+      acceptYes()
       return
     }
     setStep((s) => Math.min(s + 1, stages.length - 1))
@@ -94,7 +101,16 @@ function App() {
     <>
       <main className="mx-auto flex min-h-[100svh] w-full max-w-xl flex-col justify-center px-6 py-10">
         <p className="text-[0.68rem] uppercase tracking-[0.3em] text-rose-200/60">
-          mon · apr 27 · 4pm · marburg
+          mon · apr 27 · 4pm ·{' '}
+          <button
+            type="button"
+            onClick={() => setShowDino(true)}
+            aria-label="secret"
+            className="secret-m inline-block cursor-pointer text-rose-200/60 hover:text-[var(--color-gold)] transition"
+          >
+            m
+          </button>
+          arburg
         </p>
 
         <h1 className="mt-3 font-display text-4xl leading-[1] text-[var(--color-cream)] sm:text-5xl">
@@ -112,7 +128,7 @@ function App() {
         >
           <button
             type="button"
-            onClick={() => setAccepted(true)}
+            onClick={acceptYes}
             style={{ '--i': intensity } as CSSProperties}
             className="btn-yes absolute left-0 top-1/2 -translate-y-1/2 rounded-full bg-[var(--color-cream)] px-6 py-3 text-sm font-medium text-[#12050f] active:scale-95"
           >
@@ -139,7 +155,9 @@ function App() {
         ) : null}
       </main>
 
-      {accepted ? <PlanModal onClose={() => setAccepted(false)} /> : null}
+      {screen === 'intro' ? <YesIntro onDone={() => setScreen('plan')} /> : null}
+      {screen === 'plan' ? <PlanModal onClose={() => setScreen('form')} /> : null}
+      {showDino ? <MarburgDino onClose={() => setShowDino(false)} /> : null}
     </>
   )
 }
@@ -157,6 +175,32 @@ const stops: Stop[] = [
   { time: '7:30', title: 'dinner', note: 'mangeons du pain allemand uniquement.', images: [olivaInterior, olivaTerrace] },
 ]
 
+function YesIntro({ onDone }: { onDone: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 3200)
+    return () => clearTimeout(t)
+  }, [onDone])
+
+  return (
+    <div className="intro-root fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#12050f] px-6">
+      <svg
+        viewBox="0 0 900 200"
+        className="intro-svg w-full max-w-3xl"
+        aria-hidden
+      >
+        <text
+          x="50%"
+          y="55%"
+          textAnchor="middle"
+          className="intro-text"
+        >
+          i know that you would say yes
+        </text>
+      </svg>
+    </div>
+  )
+}
+
 function PlanModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[rgba(12,5,10,0.78)] px-4 py-8 backdrop-blur-md">
@@ -164,8 +208,12 @@ function PlanModal({ onClose }: { onClose: () => void }) {
         <p className="text-[0.68rem] uppercase tracking-[0.3em] text-rose-200/60">the plan</p>
 
         <ol className="mt-5 space-y-5">
-          {stops.map((stop) => (
-            <li key={stop.time} className="flex gap-4">
+          {stops.map((stop, i) => (
+            <li
+              key={stop.time}
+              className="stop-in flex gap-4"
+              style={{ animationDelay: `${0.25 + i * 0.7}s` }}
+            >
               <span className="w-12 shrink-0 pt-0.5 font-display text-base italic text-[var(--color-gold)]">
                 {stop.time}
               </span>
@@ -174,9 +222,9 @@ function PlanModal({ onClose }: { onClose: () => void }) {
                 {stop.note ? <p className="mt-0.5 text-xs text-rose-50/55">{stop.note}</p> : null}
                 {stop.images ? (
                   <div className="mt-2 grid grid-cols-2 gap-1.5">
-                    {stop.images.map((src, i) => (
+                    {stop.images.map((src, j) => (
                       <img
-                        key={i}
+                        key={j}
                         src={src}
                         alt=""
                         className="aspect-[4/3] w-full rounded-md object-cover opacity-85"
@@ -197,6 +245,212 @@ function PlanModal({ onClose }: { onClose: () => void }) {
           close
         </button>
       </div>
+    </div>
+  )
+}
+
+const DINO_W = 680
+const DINO_H = 220
+const PLAYER_X = 60
+const PLAYER_SIZE = 56
+const ENEMY_SIZE = 46
+const GRAVITY = 0.85
+const JUMP_V = 15
+const SPEED = 5.2
+const GOAL = 10
+
+type Enemy = { id: number; x: number; passed: boolean }
+
+function MarburgDino({ onClose }: { onClose: () => void }) {
+  const [, setTick] = useState(0)
+  const [jumps, setJumps] = useState(0)
+  const [gameOver, setGameOver] = useState(false)
+  const [revealed, setRevealed] = useState(false)
+
+  const yRef = useRef(0)
+  const vRef = useRef(0)
+  const enemiesRef = useRef<Enemy[]>([])
+  const idRef = useRef(0)
+  const lastSpawnRef = useRef(0)
+  const runningRef = useRef(true)
+
+  const reset = () => {
+    yRef.current = 0
+    vRef.current = 0
+    enemiesRef.current = []
+    idRef.current = 0
+    lastSpawnRef.current = performance.now()
+    setGameOver(false)
+    setJumps(0)
+    runningRef.current = true
+  }
+
+  const jump = () => {
+    if (gameOver || revealed) return
+    if (yRef.current <= 0.5) vRef.current = -JUMP_V
+  }
+
+  useEffect(() => {
+    if (jumps >= GOAL && !revealed) {
+      setRevealed(true)
+      runningRef.current = false
+    }
+  }, [jumps, revealed])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code === 'Space' || e.code === 'ArrowUp') {
+        e.preventDefault()
+        if (gameOver) reset()
+        else jump()
+      } else if (e.code === 'Escape') {
+        onClose()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [gameOver, revealed, onClose])
+
+  useEffect(() => {
+    let raf = 0
+    let last = performance.now()
+    lastSpawnRef.current = last
+
+    const loop = (t: number) => {
+      const dt = Math.min(t - last, 40)
+      last = t
+      const f = dt / 16
+
+      if (runningRef.current && !revealed) {
+        vRef.current += GRAVITY * f
+        yRef.current -= vRef.current * f
+        if (yRef.current < 0) {
+          yRef.current = 0
+          vRef.current = 0
+        }
+
+        if (t - lastSpawnRef.current > 1400 + Math.random() * 900) {
+          enemiesRef.current.push({ id: idRef.current++, x: DINO_W, passed: false })
+          lastSpawnRef.current = t
+        }
+
+        for (const e of enemiesRef.current) e.x -= SPEED * f
+
+        for (const e of enemiesRef.current) {
+          const overlapX = e.x < PLAYER_X + PLAYER_SIZE - 10 && e.x + ENEMY_SIZE - 10 > PLAYER_X
+          if (overlapX && yRef.current < ENEMY_SIZE - 12) {
+            runningRef.current = false
+            setGameOver(true)
+            break
+          }
+          if (!e.passed && e.x + ENEMY_SIZE < PLAYER_X) {
+            e.passed = true
+            setJumps((j) => j + 1)
+          }
+        }
+
+        enemiesRef.current = enemiesRef.current.filter((e) => e.x + ENEMY_SIZE > -30)
+
+        setTick((n) => (n + 1) % 1_000_000)
+      }
+
+      raf = requestAnimationFrame(loop)
+    }
+    raf = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(raf)
+  }, [revealed])
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[rgba(12,5,10,0.9)] px-4 py-8 backdrop-blur-md">
+      <div className="w-full max-w-3xl">
+        <div className="flex items-center justify-between text-[0.68rem] uppercase tracking-[0.3em] text-rose-200/60">
+          <span>jump melvyn · {jumps}/{GOAL}</span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full border border-white/10 px-3 py-1 text-rose-50/70 hover:bg-white/5"
+          >
+            esc
+          </button>
+        </div>
+
+        <div
+          className="relative mt-3 w-full select-none overflow-hidden rounded-2xl border border-white/10 bg-[#1a0a14]"
+          style={{ aspectRatio: `${DINO_W} / ${DINO_H}` }}
+          onClick={() => (gameOver ? reset() : jump())}
+        >
+          <div className="dino-stage absolute inset-0">
+            <div
+              className="absolute bottom-0 left-0 right-0 border-t border-white/10"
+              style={{ height: 2 }}
+            />
+
+            <img
+              src={mariiaHead}
+              alt="mariia"
+              draggable={false}
+              className="absolute"
+              style={{
+                left: `${(PLAYER_X / DINO_W) * 100}%`,
+                bottom: `calc(2px + ${(yRef.current / DINO_H) * 100}%)`,
+                width: `${(PLAYER_SIZE / DINO_W) * 100}%`,
+                height: `${(PLAYER_SIZE / DINO_H) * 100}%`,
+                objectFit: 'cover',
+                borderRadius: '50%',
+                boxShadow: '0 0 0 2px rgba(244,197,122,0.4)',
+              }}
+            />
+
+            {enemiesRef.current.map((e) => (
+              <img
+                key={e.id}
+                src={melvynHead}
+                alt="melvyn"
+                draggable={false}
+                className="absolute"
+                style={{
+                  left: `${(e.x / DINO_W) * 100}%`,
+                  bottom: 2,
+                  width: `${(ENEMY_SIZE / DINO_W) * 100}%`,
+                  height: `${(ENEMY_SIZE / DINO_H) * 100}%`,
+                  objectFit: 'cover',
+                  borderRadius: '40%',
+                  filter: 'grayscale(0.3)',
+                }}
+              />
+            ))}
+          </div>
+
+          {gameOver && !revealed ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-[rgba(12,5,10,0.8)]">
+              <p className="font-display text-3xl italic text-[var(--color-cream)]">caught by melvyn</p>
+              <p className="mt-1 text-xs uppercase tracking-[0.3em] text-rose-200/60">space · tap to retry</p>
+            </div>
+          ) : null}
+        </div>
+
+        <p className="mt-3 text-center text-[0.66rem] uppercase tracking-[0.3em] text-rose-200/40">
+          space / tap to jump
+        </p>
+      </div>
+
+      {revealed ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-[rgba(12,5,10,0.92)] px-6 backdrop-blur-xl">
+          <div className="modal-enter w-full max-w-lg rounded-2xl border border-white/10 bg-[#1a0a14] p-8 text-center">
+            <p className="text-[0.68rem] uppercase tracking-[0.3em] text-[var(--color-gold)]">secret letter</p>
+            <p className="mt-4 font-display text-2xl italic leading-snug text-[var(--color-cream)]">
+              I know that you have fear about me, it's normal, i am effraying, what kind of life do you want ?
+            </p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-6 rounded-full border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.2em] text-rose-50/70 transition hover:bg-white/5"
+            >
+              close
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
